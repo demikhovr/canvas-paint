@@ -1,0 +1,52 @@
+.settings {
+  max-width: 500px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-width: 0 2px 2px 0;
+  border-color: var(--main-color);
+  border-style: solid;
+
+}
+
+.settings__title {
+  margin: 0;
+  margin-bottom: 10px;
+
+  font-size: 24px;
+}
+
+.settings__field {
+  display: flex;
+  margin: 0;
+  margin-bottom: 10px;
+
+  label {
+    width: 200px;
+
+    font-size: 18px;
+    line-height: 20px;
+  }
+}
+
+.setting {
+  flex-grow: 1;
+
+  outline: none;
+
+  &:disabled {
+    opacity: 0.5;
+  }
+
+  &[type="color"] {
+    align-self: center;
+  }
+
+  &[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.canvas-area {
+  border: 2px dashed black;
+}
