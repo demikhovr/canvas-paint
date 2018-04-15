@@ -1,6 +1,7 @@
 `use strict`;
 
 (function () {
+  const settings = document.querySelector('.settings');
   const settingLineForm = document.querySelector(`.settings__line-form`);
   const settingElements = settingLineForm.querySelectorAll(`.setting`);
   const settingWidthNumber = settingLineForm.querySelector(`.setting--number-width`);
@@ -54,7 +55,7 @@
       `luminosity`
     ]
   };
-  
+
   initDefaultSettings();
   settingLineForm.addEventListener(`change`, settingLineFormChangeHandler);
   canvas.addEventListener(`mousedown`, startDrawingLine);
@@ -173,5 +174,66 @@
     [lastX, lastY] = [event.offsetX, event.offsetY];
 
     hue++;
+  }
+
+  // Обработчики для тач-скринов
+
+  var lastCoords = {};
+
+  canvas.addEventListener('touchstart', (evt) => {
+    evt.preventDefault();
+
+    for (var i = 0; i < evt.changedTouches.length; i++) {
+      var touch = evt.changedTouches[i];
+
+      lastCoords[touch.identifier] = { x: touch.pageX, y: touch.pageY - settings.offsetHeight};
+      ctx.beginPath();
+      ctx.moveTo(lastCoords[touch.identifier].x, lastCoords[touch.identifier].y);
+      ctx.lineTo(touch.pageX, touch.pageY - settings.offsetHeight);
+      ctx.stroke();
+    }
+  });
+
+  canvas.addEventListener('touchmove', (evt) => {
+    evt.preventDefault();
+
+    for (var i = 0; i < evt.changedTouches.length; i++) {
+      var touch = evt.changedTouches[i];
+
+      ctx.strokeStyle = (isRainbow) ? `hsl(${hue}, 100%, 50%)` : settingLineColor.value;
+
+      if (isRandom) {
+        if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+          direction = !direction;
+        }
+
+        if (direction) {
+          ctx.lineWidth++;
+        } else {
+          ctx.lineWidth--;
+        }
+      } else {
+        ctx.lineWidth = settingWidthNumber.value;
+      }
+
+      console.log(ctx.strokeStyle)
+
+      ctx.beginPath();
+      ctx.moveTo(lastCoords[touch.identifier].x, lastCoords[touch.identifier].y);
+      ctx.lineTo(touch.pageX, touch.pageY - settings.offsetHeight);
+      ctx.stroke();
+      lastCoords[touch.identifier] = { x: touch.pageX, y: touch.pageY - settings.offsetHeight};
+    }
+  });
+
+  canvas.addEventListener('touchend', touchCancel);
+  canvas.addEventListener('touchcancel', touchCancel);
+
+  function touchCancel(evt) {
+    for (var i = 0; i < evt.changedTouches.length; i++) {
+      var touch = evt.changedTouches[i];
+
+      delete lastCoords[touch.identifier];
+    }
   }
 }());
